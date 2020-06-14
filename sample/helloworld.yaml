@@ -1,0 +1,23 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: helloworld-go
+  labels:
+    app: helloworld-go
+spec:
+  selector:
+    matchLabels:
+      app: helloworld-go
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: helloworld-go
+    spec:
+      containers:
+      - name: helloworld-go
+        image: gcr.io/knative-samples/helloworld-go
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 8080
+          name: http

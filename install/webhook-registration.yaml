@@ -1,0 +1,30 @@
+apiVersion: admissionregistration.k8s.io/v1beta1
+kind: MutatingWebhookConfiguration
+metadata:
+  name: env-injector.toversus.dev
+webhooks:
+- name: env-injector.toversus.dev
+  failurePolicy: Fail
+  sideEffects: NoneOnDryRun
+  clientConfig:
+    service:
+      namespace: injector
+      name: env-injector
+      path: /inject
+  namespaceSelector:
+    matchExpressions:
+    - key: toversus.dev.env-injector.exclude
+      operator: NotIn
+      values: ["true"]
+  rules:
+    - operations: ["CREATE","UPDATE"]
+      apiGroups: ["apps"]
+      apiVersions: ["v1"]
+      resources: ["deployments"]
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: env-injector-certs
+  namespace: injector
+# The data is populated at install time.
